@@ -45,8 +45,6 @@ class _MyAppState extends State<MyApp> {
         model: 'assets/model_unquant.tflite', labels: 'assets/labels.txt');
   }
 
-
-
   pickImage() async {
     var image = await picker.pickImage(source: ImageSource.camera);
     if (image == null) return null;
@@ -65,7 +63,7 @@ class _MyAppState extends State<MyApp> {
     detectImage(_image);
   }
 
-    @override
+  @override
   void dispose() {
     super.dispose();
     _image.delete(); // Delete the temporary image file, if applicable
@@ -99,6 +97,9 @@ class _MyAppState extends State<MyApp> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              SizedBox(
+                height: 10,
+              ),
               Center(
                 child: _loading
                     ? Container(
@@ -120,15 +121,16 @@ class _MyAppState extends State<MyApp> {
                               child: Image.file(_image),
                             ),
                             SizedBox(
-                              height: 20,
+                              height: 10,
                             ),
                             Text(
                               '${_output[0]['label']}',
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 15,
+                                fontSize: 20,
                               ),
-                            )
+                            ),
+                            SizedBox(height: 10),
                           ],
                         ),
                       ),
