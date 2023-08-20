@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:tflite/tflite.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,7 +13,60 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final ImagePicker picker = ImagePicker();
   bool _loading = true;
+  late File _image;
+  late List _output;
+
+  @override
+  void initState() {
+    super.initState();
+    loadMode().then((value) {
+      setState(() {});
+    });
+  }
+
+  detectImage(File image) async {
+    var output = await Tflite.runModelOnImage(
+      path: image.path,
+      numResults: 2,
+      threshold: 0.6,
+      imageMean: 127.5,
+      imageStd: 127.5,
+    );
+    setState(() {
+      _output = output!;
+      _loading = false;
+    });
+  }
+
+  loadMode() async {
+    await Tflite.loadModel(
+        model: 'assets/model_unquant.tflite', labels: 'assets/labels.txt');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  pickImage() async {
+    var image = await picker.pickImage(source: ImageSource.camera);
+    if (image == null) return null;
+    setState(() {
+      _image = File(image.path);
+    });
+    detectImage(_image);
+  }
+
+  pickGalleryImage() async {
+    var image = await picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return null;
+    setState(() {
+      _image = File(image.path);
+    });
+    detectImage(_image);
+  }
 
   // This widget is the root of your application.
   @override
@@ -52,7 +108,30 @@ class _MyAppState extends State<MyApp> {
                           ],
                         ),
                       )
-                    : Container(),
+                    : Container(
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 250,
+                              child: Image.file(_image),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            _output != null
+                                ? Text(
+                                    '${_output[0]['label']}',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                    ),
+                                  )
+                                : Container(
+                                  child: SizedBox(height: 20,),
+                                ),
+                          ],
+                        ),
+                      ),
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
@@ -60,44 +139,50 @@ class _MyAppState extends State<MyApp> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        //leaving this nothing for now
+                        pickImage();
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 25, vertical: 15),
                         decoration: BoxDecoration(
                           color: Colors.amberAccent,
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: Text("Capture a Photo",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
+                        child: Text(
+                          "Capture a Photo",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     GestureDetector(
                       onTap: () {
-                        //leaving this nothing for now
+                        pickGalleryImage();
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 25, vertical: 15),
                         decoration: BoxDecoration(
                           color: Colors.amberAccent,
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: Text("Select a Photo",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
+                        child: Text(
+                          "Select a Photo",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
                         ),
                       ),
                     ),
