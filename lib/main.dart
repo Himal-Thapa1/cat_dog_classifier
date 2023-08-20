@@ -83,18 +83,11 @@ class _MyAppState extends State<MyApp> {
             children: [
               SizedBox(height: 45),
               Text(
-                "♠",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                ),
-              ),
-              SizedBox(height: 5),
-              Text(
                 "Cats and Dogs Detector.",
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
+                  // fontFamily: 'YanoneKafeesatz-Regular'
                 ),
               ),
               SizedBox(
