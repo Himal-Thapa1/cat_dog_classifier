@@ -45,10 +45,7 @@ class _MyAppState extends State<MyApp> {
         model: 'assets/model_unquant.tflite', labels: 'assets/labels.txt');
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+
 
   pickImage() async {
     var image = await picker.pickImage(source: ImageSource.camera);
@@ -66,6 +63,13 @@ class _MyAppState extends State<MyApp> {
       _image = File(image.path);
     });
     detectImage(_image);
+  }
+
+    @override
+  void dispose() {
+    super.dispose();
+    _image.delete(); // Delete the temporary image file, if applicable
+    Tflite.close();
   }
 
   // This widget is the root of your application.
@@ -112,23 +116,19 @@ class _MyAppState extends State<MyApp> {
                         child: Column(
                           children: [
                             Container(
-                              height: 250,
+                              height: 350,
                               child: Image.file(_image),
                             ),
                             SizedBox(
                               height: 20,
                             ),
-                            _output != null
-                                ? Text(
-                                    '${_output[0]['label']}',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                    ),
-                                  )
-                                : Container(
-                                  child: SizedBox(height: 20,),
-                                ),
+                            Text(
+                              '${_output[0]['label']}',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            )
                           ],
                         ),
                       ),
