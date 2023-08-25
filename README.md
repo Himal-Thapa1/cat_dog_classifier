@@ -2,6 +2,6 @@
 
 This project is here to help me learn about tensor flow in flutter, Gotta tell you even
 though this is a shitty app but I love it, because a machine is determining whether the
-photo taken is cat's photo or dog's photo.
+photo taken is cat's photo or dog's photo, How cool is that?🤯
 
 Disclaimer: donot try with your own photo. 😁
